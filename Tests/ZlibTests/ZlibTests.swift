@@ -1,5 +1,5 @@
 import XCTest
-@testable import ZlibSwift
+@testable import Zlib
 
 
 final class ZlibTests: XCTestCase {
@@ -8,16 +8,10 @@ final class ZlibTests: XCTestCase {
         let randomData=Data((0 ..< 64).map { _ in UInt8.random(in: UInt8.min ... UInt8.max) })
         
         // generate compressed data using Zlib API
-        guard let zCompressed = randomData.zCompressed else {
-            XCTAssert(false)
-            return
-        }
+        let zCompressed = try randomData.zlibCompressed
     
         // decompress using zLib
-        guard let decompressed = zCompressed.zDecompressed else {
-            XCTAssert(false)
-            return
-        }
+        let decompressed = try zCompressed.zlibDecompressed
         XCTAssertEqual(randomData==decompressed,true)
     }
 
@@ -30,10 +24,7 @@ final class ZlibTests: XCTestCase {
         let darwinCompressed = try (randomData as NSData).compressed(using: .zlib) as Data
                       
         // decompress using zLib
-        guard let decompressed = darwinCompressed.zDecompressed else {
-            XCTAssert(false)
-            return
-        }
+        let decompressed = try darwinCompressed.deflateDecompressed
         
         
         XCTAssertEqual(randomData==decompressed,true)
@@ -43,10 +34,7 @@ final class ZlibTests: XCTestCase {
         let randomData=Data((0 ..< 64).map { _ in UInt8.random(in: UInt8.min ... UInt8.max) })
         
         // generate compressed data using Zlib API
-        guard let zCompressed = randomData.zCompressed else {
-            XCTAssert(false,"Compression error")
-            return
-        }
+        let zCompressed = try randomData.deflateCompressed
         
         // decompress using Darwin
         guard let decompressed = try (zCompressed as NSData).decompressed(using: .zlib) as Data? else {

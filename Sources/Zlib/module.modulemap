@@ -1,6 +1,0 @@
-
-
-module Zlib [system] {
-       header "shim.h"
-       link "z"
-}

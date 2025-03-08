@@ -3,36 +3,28 @@ import PackageDescription
 
 let package = Package(
     name: "Zlib",
-    platforms: [
-        .iOS(.v14),
-        .macOS(.v12),
-        .macCatalyst(.v14),
-        .tvOS(.v14),
-        .watchOS(.v5)
-    ],
    products: [
         .library(
             name: "Zlib",
-            targets: ["ZlibSwift"]
+            targets: ["Zlib"]
             )
     ],
     dependencies: [],
     targets: [
-        .target(name: "ZlibShims", dependencies: ["Zlib"]),
-        .target(name: "ZlibSwift",
+        .target(name: "Zlib",
             dependencies: [
-                .target(name:"ZlibShims"),
+                .target(name:"CNIOExtrasZlib"),
             ]
         ),
-        .systemLibrary(
-               name: "Zlib",
-               pkgConfig: "zlib",
-               providers: [
-                    .apt(["zlib"]),
-                    .brew(["zlib"]),
-                ]),
+        .target(
+            name: "CNIOExtrasZlib",
+            publicHeadersPath: "include",
+            linkerSettings: [
+                .linkedLibrary("z")
+            ]
+        ),
         .testTarget(
             name: "ZlibTests",
-            dependencies: ["ZlibSwift"]),
+            dependencies: ["Zlib"]),
     ]
 )
