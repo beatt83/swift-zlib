@@ -3,7 +3,7 @@ import Foundation
 import Zlib
 
 public extension Data {
-    var zDecompressed: Data? {
+    var zlibDecompressed: Data? {
         
           let data = self.withUnsafeBytes({ (ptr: UnsafeRawBufferPointer) in
             let src = ptr.baseAddress!.bindMemory(to: UInt8.self, capacity: self.count)
@@ -22,7 +22,7 @@ public extension Data {
     }
     
 
-    var zCompressed: Data? {
+    var zlibCompressed: Data? {
         let data = self.withUnsafeBytes({ (ptr: UnsafeRawBufferPointer) in
             let src = ptr.baseAddress!.bindMemory(to: UInt8.self, capacity: self.count)
             

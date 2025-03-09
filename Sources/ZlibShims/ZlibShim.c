@@ -42,9 +42,8 @@ unsigned char* zCompress(const unsigned char *src,unsigned int inSize,unsigned i
     strm.zalloc = Z_NULL;
     strm.zfree = Z_NULL;
     strm.opaque = Z_NULL;
-  //  ret = deflateInit(&strm, Z_DEFAULT_COMPRESSION);
-    
-    ret = deflateInit2(&strm, Z_DEFAULT_COMPRESSION,Z_DEFLATED, -MAX_WBITS, MAX_MEM_LEVEL, Z_DEFAULT_STRATEGY);
+    ret = deflateInit(&strm, Z_DEFAULT_COMPRESSION);
+ //   ret = deflateInit2(&strm, Z_DEFAULT_COMPRESSION,Z_DEFLATED, -MAX_WBITS, MAX_MEM_LEVEL, Z_DEFAULT_STRATEGY); => without header/footer
     if (ret != Z_OK) {
         free(result);
         return NULL;
@@ -117,7 +116,8 @@ unsigned char* zUncompress(const unsigned char *src,unsigned int inSize,unsigned
     strm.avail_in = 0;
     strm.next_in = Z_NULL;
         
-    ret = inflateInit2(&strm,-MAX_WBITS);
+//  ret = inflateInit2(&strm,-MAX_WBITS); // no header/footer
+    ret = inflateInit(&strm);
     if (ret != Z_OK) {
         free(result);
         return NULL;
