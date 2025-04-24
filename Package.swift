@@ -2,29 +2,24 @@
 import PackageDescription
 
 let package = Package(
-    name: "Zlib",
-   products: [
+    name: "swift-zlib",
+    products: [
         .library(
             name: "Zlib",
-            targets: ["Zlib"]
+            targets: ["SwiftZLib"]
             )
     ],
-    dependencies: [],
+    dependencies: [
+        .package(url: "https://github.com/the-swift-collective/zlib.git", from: "1.3.1"),
+    ],
     targets: [
-        .target(name: "Zlib",
+        .target(name: "SwiftZLib",
             dependencies: [
-                .target(name:"CNIOExtrasZlib"),
-            ]
-        ),
-        .target(
-            name: "CNIOExtrasZlib",
-            publicHeadersPath: "include",
-            linkerSettings: [
-                .linkedLibrary("z")
+                .product(name: "ZLib", package: "zlib"),
             ]
         ),
         .testTarget(
             name: "ZlibTests",
-            dependencies: ["Zlib"]),
+            dependencies: ["SwiftZLib"])
     ]
 )

@@ -1,5 +1,5 @@
 import XCTest
-@testable import Zlib
+@testable import SwiftZLib
 
 
 final class ZlibTests: XCTestCase {
@@ -15,8 +15,6 @@ final class ZlibTests: XCTestCase {
         XCTAssertEqual(randomData==decompressed,true)
     }
 
-    
-#if canImport(Darwin)
     func testDarwinDecompressed() throws {
         let randomData=Data((0 ..< 64).map { _ in UInt8.random(in: UInt8.min ... UInt8.max) })
         
@@ -43,6 +41,4 @@ final class ZlibTests: XCTestCase {
         }
         XCTAssertEqual(randomData==decompressed,true)
     }
-     
-#endif // canImport(Darwin)
 }

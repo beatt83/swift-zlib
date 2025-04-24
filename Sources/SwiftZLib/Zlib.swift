@@ -1,5 +1,5 @@
 import Foundation
-import CNIOExtrasZlib
+import ZLib
 
 /// An error type for compression and decompression failures.
 public enum CompressionError: Error {
@@ -25,17 +25,22 @@ public extension Data {
     var zlibCompressed: Data {
         get throws {
             var stream = z_stream()
+            let streamSize = Int32(MemoryLayout<z_stream>.size)
             stream.zalloc = nil
             stream.zfree = nil
             stream.opaque = nil
             
             // Initialize the compression stream using our inline wrapper.
-            let initResult = CNIOExtrasZlib_deflateInit2(&stream,
-                                                         Z_DEFAULT_COMPRESSION,
-                                                         Z_DEFLATED,
-                                                         15, // windowBits: 15 for zlib format
-                                                         8,  // memLevel: default is usually 8
-                                                         Z_DEFAULT_STRATEGY)
+            let initResult = deflateInit2_(
+                &stream,
+                Z_DEFAULT_COMPRESSION,
+                Z_DEFLATED,
+                15, // windowBits: 15 for zlib format
+                8,  // memLevel: default is usually 8
+                Z_DEFAULT_STRATEGY,
+                ZLIB_VERSION,
+                streamSize
+            )
             guard initResult == Z_OK else {
                 throw CompressionError.compressionFailed(initResult)
             }
@@ -82,12 +87,18 @@ public extension Data {
     var zlibDecompressed: Data {
         get throws {
             var stream = z_stream()
+            let streamSize = Int32(MemoryLayout<z_stream>.size)
             stream.zalloc = nil
             stream.zfree = nil
             stream.opaque = nil
             
             // windowBits = 15 tells zlib to expect a zlib header/trailer.
-            let initResult = CNIOExtrasZlib_inflateInit2(&stream, 15)
+            let initResult = inflateInit2_(
+                &stream,
+                15,
+                ZLIB_VERSION,
+                streamSize
+            )
             guard initResult == Z_OK else {
                 throw CompressionError.decompressionFailed(initResult)
             }
@@ -136,17 +147,22 @@ public extension Data {
     var deflateCompressed: Data {
         get throws {
             var stream = z_stream()
+            let streamSize = Int32(MemoryLayout<z_stream>.size)
             stream.zalloc = nil
             stream.zfree = nil
             stream.opaque = nil
 
             // windowBits = -15 produces a raw DEFLATE stream (RFC1951), no header/trailer.
-            let initResult = CNIOExtrasZlib_deflateInit2(&stream,
-                                                         Z_DEFAULT_COMPRESSION,
-                                                         Z_DEFLATED,
-                                                         -15,
-                                                         8,
-                                                         Z_DEFAULT_STRATEGY)
+            let initResult = deflateInit2_(
+                &stream,
+                Z_DEFAULT_COMPRESSION,
+                Z_DEFLATED,
+                -15,
+                8,
+                Z_DEFAULT_STRATEGY,
+                ZLIB_VERSION,
+                streamSize
+            )
             guard initResult == Z_OK else {
                 throw CompressionError.compressionFailed(initResult)
             }
@@ -193,12 +209,18 @@ public extension Data {
     var deflateDecompressed: Data {
         get throws {
             var stream = z_stream()
+            let streamSize = Int32(MemoryLayout<z_stream>.size)
             stream.zalloc = nil
             stream.zfree = nil
             stream.opaque = nil
             
             // windowBits = -15 tells zlib to expect a raw DEFLATE stream.
-            let initResult = CNIOExtrasZlib_inflateInit2(&stream, -15)
+            let initResult = inflateInit2_(
+                &stream,
+                -15,
+                ZLIB_VERSION,
+                streamSize
+            )
             guard initResult == Z_OK else {
                 throw CompressionError.decompressionFailed(initResult)
             }
