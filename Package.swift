@@ -1,6 +1,16 @@
 // swift-tools-version: 5.5
 import PackageDescription
 
+#if os(Linux) || os(Windows)
+let zlibPkgConfig: String? = "zlib"
+let zlibProviders: [SystemPackageProvider]? = [
+    .apt(["zlib"])
+]
+#else
+let zlibPkgConfig: String? = nil
+let zlibProviders: [SystemPackageProvider]? = nil
+#endif
+
 let package = Package(
     name: "Zlib",
     platforms: [
@@ -26,11 +36,9 @@ let package = Package(
         ),
         .systemLibrary(
                name: "Zlib",
-               pkgConfig: "zlib",
-               providers: [
-                    .apt(["zlib"]),
-                    .brew(["zlib"]),
-                ]),
+               pkgConfig: zlibPkgConfig,
+               providers: zlibProviders
+        ),
         .testTarget(
             name: "ZlibTests",
             dependencies: ["ZlibSwift"]),
